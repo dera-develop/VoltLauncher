@@ -153,8 +153,6 @@ class ApplicationFrame:
     except PermissionError:
       messagebox.showerror("ERROR", f"Permission denied. \n= = = = = = = = = =\nPath: {self.appPath}")
     except:
-      import traceback
-      print(traceback.format_exc())
       messagebox.showerror("ERROr", f"Unknown error.")
 
   def execution(self):
