@@ -1,0 +1,8 @@
+vp/
+test/
+dist/
+build/
+.vscode/
+
+*.json
+*.spec
