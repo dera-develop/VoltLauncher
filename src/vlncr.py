@@ -25,157 +25,156 @@ It supports execution via file path and the specification of arguments.
 """
 
 class exception_TypeError(Exception):
-    def __init__(self, variable, needTypeList: list):
-        super().__init__(f'variable type error | variable type: {type(variable)}, need:{needTypeList}')
+    def __init__(self, variable, need_type_list: list):
+        super().__init__(f'variable type error | variable type: {type(variable)}, need:{need_type_list}')
 
-def checkEXE() -> bool:
+def check_exe() -> bool:
   return getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 
-def getPath(path: str) -> str:
-  if checkEXE():
+def get_path(path: str) -> str:
+  if check_exe():
     base = os.path.dirname(sys.executable)
   else:
     base = os.path.dirname(os.path.abspath(__file__))
   return os.path.join(base, path)
 
-def load_pathDatas() -> dict | None:
-  confPath = getPath(PATH_APPLICATION_PATHDATA)
-  if not os.path.exists(confPath):
+def load_path_datas() -> dict | None:
+  conf_path = get_path(PATH_APPLICATION_PATHDATA)
+  if not os.path.exists(conf_path):
     try:
-      with open(confPath, "w", encoding="utf-8") as f:
+      with open(conf_path, "w", encoding="utf-8") as f:
         json.dump({}, f, indent=2)
         return {}
     except:
       return None
   try:
-    with open(confPath, "r", encoding="utf-8") as f:
+    with open(conf_path, "r", encoding="utf-8") as f:
       return json.load(f)
   except:
     return None
 
-def save_pathDatas(datas) -> bool:
-  confPath = getPath(PATH_APPLICATION_PATHDATA)
+def save_path_datas(datas) -> bool:
+  conf_path = get_path(PATH_APPLICATION_PATHDATA)
   try:
-    with open(confPath, "w", encoding="utf-8") as f:
+    with open(conf_path, "w", encoding="utf-8") as f:
       json.dump(datas, f, indent=2)
     return True
   except:
     return False
 
-def Uniform_Spacing_Print(source: list, outputFormat: str, printFunction=print, space=False) -> None:
+def uniform_spacing_print(source: list, output_format: str, print_function=print, space=False) -> None:
   if isinstance(source, list):
-    useSource = list(singleList for singleList in source)
-    for y in range(len(useSource)):
-      for x in range(len(useSource[y])):
-        if not isinstance(useSource[y][x], str):
-          useSource[y][x] = str(useSource[y][x])
+    use_source = list(singleList for singleList in source)
+    for y in range(len(use_source)):
+      for x in range(len(use_source[y])):
+        if not isinstance(use_source[y][x], str):
+          use_source[y][x] = str(use_source[y][x])
 
-    strLength = {}
-    for y in range(len(useSource)):
-      for x in range(len(useSource[y])):
-        if not(x in strLength):
-          strLength[x] = len(useSource[y][x])
+    str_length = {}
+    for y in range(len(use_source)):
+      for x in range(len(use_source[y])):
+        if not(x in str_length):
+          str_length[x] = len(use_source[y][x])
         else:
-          if strLength[x] < len(useSource[y][x]):
-            strLength[x] = len(useSource[y][x])
+          if str_length[x] < len(use_source[y][x]):
+            str_length[x] = len(use_source[y][x])
     
-    for y in range(len(useSource)):
-      for x in range(len(useSource[y])):
-        for l in range(strLength[x] - len(useSource[y][x])):
+    for y in range(len(use_source)):
+      for x in range(len(use_source[y])):
+        for l in range(str_length[x] - len(use_source[y][x])):
           if space:
-            useSource[y][x] = f' {useSource[y][x]}'
+            use_source[y][x] = f' {use_source[y][x]}'
           else:
-            useSource[y][x] = f'{useSource[y][x]} '
+            use_source[y][x] = f'{use_source[y][x]} '
 
-    leftPos = 0
-    leftOpen = False
-    indexSelectPoss = []
-    for index, fChar in enumerate(outputFormat):
+    left_pos = 0
+    left_open = False
+    index_select_poss = []
+    for index, fChar in enumerate(output_format):
       if fChar == '<':
-        leftPos = index
-        leftOpen = True
+        left_pos = index
+        left_open = True
         continue
-      if fChar == '>' and leftOpen:
-        leftOpen = False
-        indexSelectPoss.append([leftPos, index-leftPos+1, int(outputFormat[leftPos+1:index])])
-    for singleList in useSource:
-      outputLine = outputFormat
-      for i in range(len(indexSelectPoss)-1, -1, -1):
-        if len(singleList)-1 >= indexSelectPoss[i][2]:
-          indexContents = singleList[indexSelectPoss[i][2]]
+      if fChar == '>' and left_open:
+        left_open = False
+        index_select_poss.append([left_pos, index-left_pos+1, int(output_format[left_pos+1:index])])
+    for singleList in use_source:
+      output_line = output_format
+      for i in range(len(index_select_poss)-1, -1, -1):
+        if len(singleList)-1 >= index_select_poss[i][2]:
+          index_contents = singleList[index_select_poss[i][2]]
         else:
-          indexContents = 'N/A'
-        outputLine = outputLine[:indexSelectPoss[i][0]] + indexContents + outputLine[indexSelectPoss[i][0] + indexSelectPoss[i][1]:]
-      printFunction(outputLine)
-
+          index_contents = 'N/A'
+        output_line = output_line[:index_select_poss[i][0]] + index_contents + output_line[index_select_poss[i][0] + index_select_poss[i][1]:]
+      print_function(output_line)
 
   else:
       raise exception_TypeError(source, "'list'")
 
 def dict_to_list(dict: dict) -> list:
-  useDict = dict.copy()
-  for dName, dValue in useDict.items():
-    if not isinstance(dValue, list):
-      useDict[dName] = [dValue]
+  use_dict = dict.copy()
+  for dict_ame, dict_value in use_dict.items():
+    if not isinstance(dict_value, list):
+      use_dict[dict_ame] = [dict_value]
   
-  return [list(itertools.chain([sName], sValue)) for sName, sValue in useDict.items()]
+  return [list(itertools.chain([s_name], s_value)) for s_name, s_value in use_dict.items()]
 
 ####################################
 # GUI
 ####################################
-class ApplicationFrame:
+class applicationFrameClass:
   def __init__(self, root: tk.Tk, app_name: str, app_path: str):
     self.root = root
-    self.appName = app_name
-    self.appPath = app_path
+    self.app_name = app_name
+    self.app_path = app_path
 
   def create(self):
-    self.mainFrame = tk.Frame(self.root, bg="#ffffff")
-    self.mainFrame.pack(side="top", fill="both", padx=6, pady=6)
-    innerFrame = tk.Frame(self.mainFrame, bg="#ffffff")
-    innerFrame.pack(side="top", fill="both", padx=4, pady=4)
-    infoFrame = tk.Frame(innerFrame, bg="#ffffff")
-    infoFrame.pack(side="top", fill="both")
-    lavelFrame = tk.Frame(infoFrame, bg="#ffffff")
-    lavelFrame.pack(side="left", fill="y")
-    tk.Label(lavelFrame, text="Application: ", anchor="w", bg="#ffffff").pack(anchor="w")
-    tk.Label(lavelFrame, text="Path :", anchor="w", bg="#ffffff").pack(anchor="w")
-    tk.Label(infoFrame, text=self.appName, anchor="w", bg="#ffffff").pack(anchor="w")
-    tk.Label(infoFrame, text=self.appPath, anchor="w", bg="#ffffff").pack(anchor="w")
-    tk.Button(innerFrame, text="Run", relief="groove", bd=2, command=self.execution).pack(side="left", fill="both", padx=2, pady=2, expand=True)
-    tk.Button(innerFrame, text=" Delete ", relief="groove", bd=2, command=self.delete).pack(side="left", padx=2, pady=2)
+    self.frame_main = tk.Frame(self.root, bg="#ffffff")
+    self.frame_main.pack(side="top", fill="both", padx=6, pady=6)
+    inner_frame = tk.Frame(self.frame_main, bg="#ffffff")
+    inner_frame.pack(side="top", fill="both", padx=4, pady=4)
+    frame_info  = tk.Frame(inner_frame, bg="#ffffff")
+    frame_info.pack(side="top", fill="both")
+    flame_lavel = tk.Frame(frame_info, bg="#ffffff")
+    flame_lavel.pack(side="left", fill="y")
+    tk.Label(flame_lavel,   text="Application: ", anchor="w", bg="#ffffff").pack(anchor="w")
+    tk.Label(flame_lavel,   text="Path :",        anchor="w", bg="#ffffff").pack(anchor="w")
+    tk.Label(frame_info,    text=self.app_name,   anchor="w", bg="#ffffff").pack(anchor="w")
+    tk.Label(frame_info,    text=self.app_path,   anchor="w", bg="#ffffff").pack(anchor="w")
+    tk.Button(inner_frame,  text="Run",       relief="groove", bd=2, command=self.execution).pack(side="left", fill="both", padx=2, pady=2, expand=True)
+    tk.Button(inner_frame,  text=" Delete ",  relief="groove", bd=2, command=self.delete   ).pack(side="left",              padx=2, pady=2)
   
   def run_subThreads(self):
     try:
-      subprocess.run([self.appPath])
+      subprocess.run([self.app_path])
     except FileNotFoundError:
-      messagebox.showerror("ERROR", f"Executable file not found. \n= = = = = = = = = =\nPath: {self.appPath}")
+      messagebox.showerror("ERROR", f"Executable file not found. \n= = = = = = = = = =\nPath: {self.app_path}")
     except PermissionError:
-      messagebox.showerror("ERROR", f"Permission denied. \n= = = = = = = = = =\nPath: {self.appPath}")
-    except:
-      messagebox.showerror("ERROr", f"Unknown error.")
+      messagebox.showerror("ERROR", f"Permission denied. \n= = = = = = = = = =\nPath: {self.app_path}")
+    except Exception as e:
+      messagebox.showerror("ERROr", f"Application Error.\n{str(e)}")
 
   def execution(self):
     threading.Thread(target=self.run_subThreads, daemon=True).start()
   
   def delete(self):
-    if messagebox.askokcancel("info", f"Do you want to remove the application '{self.appName}' from your registration?"):
-      datas = load_pathDatas()
+    if messagebox.askokcancel("info", f"Do you want to remove the application '{self.app_name}' from your registration?"):
+      datas = load_path_datas()
       if datas is None:
         messagebox.showerror("ERROR", "Failed to load data file.")
         sys.exit()
       
-      if self.appName in datas:
-        datas.pop(self.appName)
+      if self.app_name in datas:
+        datas.pop(self.app_name)
       
-      res = save_pathDatas(datas)
+      res = save_path_datas(datas)
       if not res:
         messagebox.showerror("ERROR", "Failed to save data file.")
-      self.mainFrame.destroy()
+      self.frame_main.destroy()
 
 ####################################
 ####################################
-    
+
 
 ####################################
 # Main
@@ -215,7 +214,7 @@ def main():
 
   ########## add(registration) ##########
   elif args.command == "add":
-    datas = load_pathDatas()
+    datas = load_path_datas()
     if datas is None:
       print("ERROR: Failed to load data file.")
       sys.exit()
@@ -223,19 +222,19 @@ def main():
     if (not args.overwrite) and (args.app_name in datas):
       print("ERROR: Application is already registered.")
       sys.exit()
-    
+
     if args.overwrite and (not args.app_name in datas):
       print("ERROR: Application is not registered.")
       sys.exit()
-    
+
     datas[args.app_name] = args.app_path
-    
-    if not save_pathDatas(datas):
+
+    if not save_path_datas(datas):
       print("ERROR: Failed to save data file.")
 
   ########## delete ##########
   elif args.command == "del":
-    datas = load_pathDatas()
+    datas = load_path_datas()
     if datas is None:
       print("ERROR: Failed to load data file.")
       sys.exit()
@@ -249,14 +248,14 @@ def main():
       if input("> ") != "y":
         print("canceled.")
         sys.exit()
-    
+
     datas.pop(args.app_name)
-    if not save_pathDatas(datas):
+    if not save_path_datas(datas):
       print("ERROR: Failed to save data file.")
 
   ########## run(execution) ##########
   elif args.command == "run":
-    datas = load_pathDatas()
+    datas = load_path_datas()
     if datas is None:
       print("ERROR: Failed to load data file.")
       sys.exit()
@@ -265,20 +264,20 @@ def main():
       print("ERROR: This is an unregistered application.")
       sys.exit()
 
-    exeAppArgs = [datas.get(args.app_name)] + args.app_args
+    exe_app_args = [datas.get(args.app_name)] + args.app_args
     
     try:
-      subprocess.run(args=exeAppArgs)
+      subprocess.run(args=exe_app_args)
     except FileNotFoundError:
       print(f"ERROR: Executable file not found. ({datas.get(args.app_name)})")
     except PermissionError:
       print(f"ERROR: Permission denied. ({datas.get(args.app_name)})")
-    except:
-      print("ERROR: Unknown error.")
+    except Exception as e:
+      print(f"ERROR: Application Error\n{str(e)}")
 
   ########## lsit ##########
   elif args.command == "list":
-    datas = load_pathDatas()
+    datas = load_path_datas()
     if datas is None:
       print("ERROR: Failed to load data file.")
       sys.exit()
@@ -286,97 +285,96 @@ def main():
     print("================================================================")
     print("application : path")
     print("----------------------------------------------------------------") 
-    Uniform_Spacing_Print(dict_to_list(datas), "<0> : <1>")
+    uniform_spacing_print(dict_to_list(datas), "<0> : <1>")
     print("----------------------------------------------------------------") 
     print(f"Total: {len(datas)}")
   
   ########## GUI mode ##########
   elif args.command == "gui":
-    windowR = tk.Tk()
-    windowR.geometry("300x500")
-    windowR.title(f"Volt Launcher v{APP_VERSION}")
+    window_root = tk.Tk()
+    window_root.geometry("300x500")
+    window_root.title(f"Volt Launcher v{APP_VERSION}")
     try:
-      icon = tk.PhotoImage(file=getPath(PATH_APPLICATION_GUI_ICON))
+      icon = tk.PhotoImage(file=get_path(PATH_APPLICATION_GUI_ICON))
     except:
       print("ERROR: Failed to load icon file")
       sys.exit()
     
-    windowR.iconphoto(True, icon)
+    window_root.iconphoto(True, icon)
 
+    frame_app_list = tk.Frame(window_root)
+    frame_app_list.pack(side="top", fill="both", expand=True)
+    frame_app_add = tk.Frame(window_root)
+    frame_app_add.pack(side="bottom", fill="both", expand=False)
 
-    appListFrame = tk.Frame(windowR)
-    appListFrame.pack(side="top", fill="both", expand=True)
-    dataAddFrame = tk.Frame(windowR)
-    dataAddFrame.pack(side="bottom", fill="both", expand=False)
-
-    appListScrollbar = tk.Scrollbar(appListFrame, orient="vertical")
-    appListScrollbar.pack(side="right", fill="y")
-    appListCanvas = tk.Canvas(appListFrame, highlightthickness=0)
-    appListCanvas.pack(side="left", fill="both", expand=True)
-    appListScrollbar.configure(command=appListCanvas.yview)
-    appListCanvas.configure(yscrollcommand=appListScrollbar.set)
-    appListInnerFrame = tk.Frame(appListCanvas)
-    appListInnerFrame_window = appListCanvas.create_window((0, 0), window=appListInnerFrame, anchor="nw")
+    scrollbar_app_list = tk.Scrollbar(frame_app_list, orient="vertical")
+    scrollbar_app_list.pack(side="right", fill="y")
+    canvas_app_list = tk.Canvas(frame_app_list, highlightthickness=0)
+    canvas_app_list.pack(side="left", fill="both", expand=True)
+    scrollbar_app_list.configure(command=canvas_app_list.yview)
+    canvas_app_list.configure(yscrollcommand=scrollbar_app_list.set)
+    frame_inner_app_list = tk.Frame(canvas_app_list)
+    frame_inner_app_list_window = canvas_app_list.create_window((0, 0), window=frame_inner_app_list, anchor="nw")
     def scroll(event):
-      appListCanvas.configure(scrollregion=appListCanvas.bbox("all"))
-    appListInnerFrame.bind("<Configure>", scroll)
+      canvas_app_list.configure(scrollregion=canvas_app_list.bbox("all"))
+    frame_inner_app_list.bind("<Configure>", scroll)
     def resize(event):
-      appListCanvas.itemconfig(appListInnerFrame_window, width=event.width)
-    appListCanvas.bind("<Configure>", resize)
+      canvas_app_list.itemconfig(frame_inner_app_list_window, width=event.width)
+    canvas_app_list.bind("<Configure>", resize)
 
-    dataAddInnerFrame = tk.Frame(dataAddFrame)
-    dataAddInnerFrame.pack(side="top", fill="both", padx=4, pady=4)
-    tk.Frame(dataAddInnerFrame, height=1, bg="#000000").pack(side="top", fill="both", expand=False, padx=2)
-    tk.Label(dataAddInnerFrame, text="Registration application", anchor="w").pack(side="top", anchor="w")
-    labelFrame = tk.Frame(dataAddInnerFrame)
-    labelFrame.pack(side="left", fill="y", expand=False)
-    entryFrame = tk.Frame(dataAddInnerFrame)
-    entryFrame.pack(side="left", fill="both", expand=True)
-    tk.Label(labelFrame, text="NAME: ").pack(pady=2, padx=2)
-    tk.Label(labelFrame, text="PATH: ").pack(pady=2, padx=2)
-    nameEntry = tk.Entry(entryFrame)
-    nameEntry.pack(side="top", fill="x", padx=2, pady=2, expand=True)
-    pathEntry = tk.Entry(entryFrame)
-    pathEntry.pack(side="top", fill="x", padx=2, pady=2, expand=True)
+    frame_inner_app_add = tk.Frame(frame_app_add)
+    frame_inner_app_add.pack(side="top", fill="both", padx=4, pady=4)
+    tk.Frame(frame_inner_app_add, height=1, bg="#000000").pack(side="top", fill="both", expand=False, padx=2)
+    tk.Label(frame_inner_app_add, text="Registration application", anchor="w").pack(side="top", anchor="w")
+    frame_label = tk.Frame(frame_inner_app_add)
+    frame_label.pack(side="left", fill="y", expand=False)
+    frame_entry = tk.Frame(frame_inner_app_add)
+    frame_entry.pack(side="left", fill="both", expand=True)
+    tk.Label(frame_label, text="NAME: ").pack(pady=2, padx=2)
+    tk.Label(frame_label, text="PATH: ").pack(pady=2, padx=2)
+    entry_name = tk.Entry(frame_entry)
+    entry_name.pack(side="top", fill="x", padx=2, pady=2, expand=True)
+    entry_path = tk.Entry(frame_entry)
+    entry_path.pack(side="top", fill="x", padx=2, pady=2, expand=True)
     def app_add():
-      if nameEntry.get() == "" or pathEntry.get() == "":
+      if entry_name.get() == "" or entry_path.get() == "":
         messagebox.showerror("ERROR", "Registration requires specifying a name and an absolute path.")
         return
 
-      datas = load_pathDatas()
+      datas = load_path_datas()
       if datas is None:
         messagebox.showerror("ERROR", "Failed to load data file.")
         return
 
-      if nameEntry.get() in datas:
+      if entry_name.get() in datas:
         messagebox.showerror("ERROR", "Application is already registered.")
         return
       
-      datas[nameEntry.get()] = pathEntry.get()
+      datas[entry_name.get()] = entry_path.get()
       
-      if not save_pathDatas(datas):
+      if not save_path_datas(datas):
         messagebox.showerror("ERROR", "Failed to save data file.")
         return
       
-      messagebox.showinfo("Info", f"Application registered.\nName : {nameEntry.get()}\nPath : {pathEntry.get()}")
-      appInfo = ApplicationFrame(appListInnerFrame, nameEntry.get(), pathEntry.get())
-      appInfo.create()
-      nameEntry.delete("0", "end")
-      pathEntry.delete("0", "end")
+      messagebox.showinfo("Info", f"Application registered.\nName : {entry_name.get()}\nPath : {entry_path.get()}")
+      app_info = applicationFrameClass(frame_inner_app_list, entry_name.get(), entry_path.get())
+      app_info.create()
+      entry_name.delete("0", "end")
+      entry_path.delete("0", "end")
 
 
-    tk.Button(dataAddFrame, text="Registration", command=app_add).pack(side="top", fill="both", padx=4, pady=4)
+    tk.Button(frame_app_add, text="Registration", command=app_add).pack(side="top", fill="both", padx=4, pady=4)
 
-    datas = load_pathDatas()
+    datas = load_path_datas()
     if datas is None:
       print("ERROR: Failed to load data file.")
       sys.exit()
     
-    for appName, appPath in datas.items():
-      appInfo = ApplicationFrame(appListInnerFrame, appName, appPath)
-      appInfo.create()
+    for app_name, app_path in datas.items():
+      app_info = applicationFrameClass(frame_inner_app_list, app_name, app_path)
+      app_info.create()
     
-    windowR.mainloop()
+    window_root.mainloop()
 
 
 
